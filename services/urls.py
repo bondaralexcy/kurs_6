@@ -2,7 +2,7 @@ from django.urls import path
 from services.apps import ServicesConfig
 from services.views import Homepage
 # from services.views import ContactTemplateView
-# from services.views import ClientCreateView, ClientListView, ClientDetailView,ClientUpdateView,ClientDeleteView
+from services.views import ClientCreateView, ClientListView, ClientDetailView,ClientUpdateView,ClientDeleteView
 # from services.views import MessageCreateView, MessageListView, MessageDetailView,MessageUpdateView,MessageDeleteView
 # from services.views import NewsletterCreateView, NewsletterUpdateView, NewsletterListView,NewsletterDetailView,NewsletterDeleteView
 # from services.views import LogsListView
@@ -16,12 +16,12 @@ urlpatterns = [
 
     path('', Homepage.as_view(), name='home'),
     # path('contacts/',ContactTemplateView.as_view(),name='contacts'),
-    #
-    # path('client_list/',ClientListView.as_view(),name='client_list'),
-    # path('create_client/',ClientCreateView.as_view(),name='create_client'),
-    # path('view_client/<int:pk>',ClientDetailView.as_view(),name='view_client'),
-    # path('edit_client/<int:pk>',ClientUpdateView.as_view(),name='edit_client'),
-    # path('delete_client/<int:pk>',ClientDeleteView.as_view(),name='delete_client'),
+
+    path('client_list/',ClientListView.as_view(),name='client_list'),
+    path('create_client/',ClientCreateView.as_view(),name='create_client'),
+    path('view_client/<int:pk>',ClientDetailView.as_view(),name='view_client'),
+    path('edit_client/<int:pk>',ClientUpdateView.as_view(),name='edit_client'),
+    path('delete_client/<int:pk>',ClientDeleteView.as_view(),name='delete_client'),
     #
     # path('message/create',MessageCreateView.as_view(),name='create_message'),
     # path('message/list',MessageListView.as_view(),name='list_message'),

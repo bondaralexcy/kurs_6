@@ -57,13 +57,35 @@
 
     <div class="album py-5 bg-light">
         <div class="container">
-
             <div class="row">
                 {% block content %}
+                    <div class="card-body">
+                      <caption><h2>Записи в блогах</h2></caption>
+                      <table class="table table-striped">
+                          <tr>
+                            <th>Название блога</th>
+                            <th>Описание блога</th>
+                            <th>Дата публикации</th>
+                            <th>Ссылка на блог</th>
+                          </tr>
+<!--                         {% for article in filtred_list %}-->
+<!--                          <tr>-->
+<!--                              <td>{{ article.title }}</td>-->
+<!--                              <td>{{ article.description }}</td>-->
+<!--                              <td>{{ article.published_date }}</td>-->
+<!--                              <td><a href='{% url "blog:view" article.pk %}'> Перейти к блогу</a></td>-->
+<!--                          </tr>-->
+<!--                         {% endfor %}-->
+                      </table>
+                    </div>
                 {% endblock %}
             </div>
         </div>
     </div>
+
+
+
+
 
 </main>
 

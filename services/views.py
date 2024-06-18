@@ -1,13 +1,13 @@
 from django.shortcuts import render
 
 # from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
-# from django.http import Http404
+from django.http import Http404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView,UpdateView,ListView,DetailView,DeleteView,TemplateView
 
 # from blog.models import Blog
-# from services.models import Client, Message, Newsletter, Contact, Logs
-# from services.forms import ClientForm, MessageForm, NewsletterForm
+from services.models import Client, Message, Mailing, Contact, Logs
+from services.forms import ClientForm, MessageForm, MailingForm
 # from services.services import homepage_cache
 
 
@@ -17,59 +17,61 @@ class Homepage(TemplateView):
     # extra_context = {'title':'SkyService','filtred_list': homepage_cache()}
     extra_context = {'title': 'MessageMailing Service'}
 
-# class ClientCreateView(LoginRequiredMixin,CreateView):
-#     model = Client
-#     form_class = ClientForm
-#     success_url = reverse_lazy('services:client_list')
-#     login_url = 'users:login'
-#
-#     def form_valid(self, form):
-#         self.object = form.save()
-#         self.object.owner = self.request.user
-#         self.object.save()
-#
-#         return super().form_valid(form)
-#
-# class ClientUpdateView(LoginRequiredMixin,UpdateView):
-#     model = Client
-#     fields = ('fio', 'email', 'comment',)
-#     success_url = reverse_lazy('services:client_list')
-#     login_url = 'users:login'
-#
-#     def get_object(self, queryset=None):
-#         self.object = super().get_object(queryset)
-#         if self.object.owner == self.request.user or self.request.user.is_superuser:
-#             return self.object
-#         else:
-#             raise Http404
-#
-# class ClientListView(LoginRequiredMixin,ListView):
-#     model = Client
-#     success_url = reverse_lazy('services:client_list')
-#     login_url = 'users:login'
-#
-#     def get_queryset(self):
-#         queryset = super().get_queryset()
-#         queryset = queryset.filter(id=self.kwargs.get('pk'))
-#         if not self.request.user.is_staff:
-#             queryset = queryset.filter(owner=self.request.user)
-#         return queryset
-#
-#     def get_context_data(self, *args, **kwargs):
-#         context_data = super().get_context_data(*args,**kwargs)
-#         context_data ['clients_list'] = Client.objects.all()
-#         return context_data
-#
-# class ClientDetailView(LoginRequiredMixin,DetailView):
-#     model = Client
-#     login_url = 'users:login'
-#
-# class ClientDeleteView(LoginRequiredMixin,DeleteView):
-#     model = Client
-#     success_url = reverse_lazy('services:client_list')
-#     login_url = 'users:login'
-#
-# class MessageCreateView(LoginRequiredMixin,CreateView):
+class ClientCreateView(CreateView):
+    model = Client
+    form_class = ClientForm
+    success_url = reverse_lazy('services:client_list')
+    # login_url = 'users:login'
+
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.owner = self.request.user
+        self.object.save()
+
+        return super().form_valid(form)
+
+class ClientUpdateView(UpdateView):
+    model = Client
+    fields = ('name', 'email', 'comment',)
+    success_url = reverse_lazy('services:client_list')
+    # login_url = 'users:login'
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner == self.request.user or self.request.user.is_superuser:
+            return self.object
+        else:
+            raise Http404
+
+class ClientListView(ListView):
+    model = Client
+    success_url = reverse_lazy('services:client_list')
+    extra_context = {'title': 'Список клиентов сервиса'}
+    # login_url = 'users:login'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(id=self.kwargs.get('pk'))
+        # if not self.request.user.is_staff:
+        #     queryset = queryset.filter(owner=self.request.user)
+
+        return queryset
+
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args,**kwargs)
+        context_data ['clients_list'] = Client.objects.all()
+        return context_data
+
+class ClientDetailView(DetailView):
+    model = Client
+    # login_url = 'users:login'
+
+class ClientDeleteView(DeleteView):
+    model = Client
+    success_url = reverse_lazy('services:client_list')
+    # login_url = 'users:login'
+
+# class MessageCreateView(CreateView):
 #     model = Message
 #     form_class = MessageForm
 #     success_url = reverse_lazy('services:list_message')
@@ -82,7 +84,7 @@ class Homepage(TemplateView):
 #
 #         return super().form_valid(form)
 #
-# class MessageUpdateView(LoginRequiredMixin,UpdateView):
+# class MessageUpdateView(UpdateView):
 #     model = Message
 #     fields = ('subject', 'body',)
 #     success_url = reverse_lazy('services:list_message')
@@ -93,7 +95,8 @@ class Homepage(TemplateView):
 #         if self.object.owner != self.request.user:
 #             raise Http404
 #         return self.object
-# class MessageListView(LoginRequiredMixin,ListView):
+
+# class MessageListView(ListView):
 #     model = Message
 #     success_url = reverse_lazy('services:list_message')
 #     login_url = 'users:login'
@@ -107,13 +110,13 @@ class Homepage(TemplateView):
 #     model = Message
 #
 #
-# class MessageDeleteView(LoginRequiredMixin,DeleteView):
+# class MessageDeleteView(DeleteView):
 #     model = Message
 #     success_url = reverse_lazy('services:list_message')
 #     login_url = 'users:login'
 #
 #
-# class NewsletterCreateView(LoginRequiredMixin,CreateView):
+# class NewsletterCreateView(CreateView):
 #     model = Newsletter
 #     form_class = NewsletterForm
 #     success_url = reverse_lazy('services:list_newsletter')
@@ -126,7 +129,7 @@ class Homepage(TemplateView):
 #
 #         return super().form_valid(form)
 #
-# class NewsletterUpdateView(LoginRequiredMixin,UpdateView):
+# class NewsletterUpdateView(UpdateView):
 #     model = Newsletter
 #     fields = ('start_time', 'end_time', 'periodicity', 'status', 'client', 'message')
 #     success_url = reverse_lazy('services:list_newsletter')
@@ -140,7 +143,7 @@ class Homepage(TemplateView):
 #             raise Http404
 #
 #
-# class NewsletterListView(LoginRequiredMixin,ListView):
+# class NewsletterListView(ListView):
 #     model = Newsletter
 #     success_url = reverse_lazy('services:list_newsletter')
 #     login_url = 'users:login'
@@ -169,7 +172,7 @@ class Homepage(TemplateView):
 #             queryset = queryset.filter(owner=self.request.user)
 #         return queryset
 #
-# class NewsletterDeleteView(LoginRequiredMixin,DeleteView):
+# class NewsletterDeleteView(DeleteView):
 #     model = Newsletter
 #     success_url = reverse_lazy('services:list_newsletter')
 #     login_url = 'users:login'
@@ -192,7 +195,7 @@ class Homepage(TemplateView):
 #         return render(request,self.template_name)
 #
 #
-# class LogsListView(LoginRequiredMixin,ListView):
+# class LogsListView(ListView):
 #     model = Logs
 #     success_url = reverse_lazy('services:logs_list')
 #     login_url = 'users:login'
