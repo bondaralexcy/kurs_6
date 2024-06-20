@@ -8,25 +8,25 @@
 
 
 {% block content %}
-    {% if user.is_superuser or client.owner == request.user or perms.services.delete_client%}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <p class="lead">Клиент: {{ client.name | title }}</p>
+</div>
+
         <div class="col-12">
-                <form class='row' method="post" enctype="multipart/form-data">
+                <div class='row'>
                     <div class="col-6">
                         <div class="card">
                             <div class="card-body">
-                                <div class="card-header">
-                                    <h3 class="card-title">Удалить клиента</h3>
-                                </div>
+                                <form method="post">
                                     {% csrf_token %}
                                      <p>Действительно ли вы хотите удалить клиента {{ client.name }} ?</p>
                                     <button type="submit" class="btn btn-danger">Подтвердить</button>
                                     <a href="{% url 'services:client_list' %}" class="btn btn-warning">Отмена</a>
+                                </form>
                             </div>
                         </div>
                     </div>
-                </form>
+                </div>
         </div>
-    {% else %}
-        У вас нету прав для удаления клиента "{{ client.name }}"
-    {% endif %}
+
 {% endblock %}

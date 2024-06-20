@@ -1,0 +1,133 @@
+{% extends 'services/base.html'%}
+{% block content %}
+{% load my_tags %}
+
+<div class="row text-start">
+    <div class="col-lg-6 col-md-6 col-sm-12">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Наши реквизиты</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+
+                    <tr>
+                        <td class="w-25">Компания</td>
+                        <td>ООО "Восток-М"</td>
+                    </tr>
+                    <tr>
+                        <td class="w-25">ИНН</td>
+                        <td>7728144442</td>
+                    </tr>
+                    <tr>
+                        <td class="w-25">Страна</td>
+                        <td>Россия</td>
+                    </tr>
+                    <tr>
+                        <td class="w-25">Адрес</td>
+                        <td>г.Москва, ул.Талалихина, д.12, оф.27</td>
+                    </tr>
+                   <tr>
+                        <td class="w-25">Телефон</td>
+                        <td>+7 (495) 123-45-67</td>
+                    </tr>
+                   <tr>
+                        <td class="w-25">eMail</td>
+                        <td>vostok_m@mail.ru</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 col-md-4 col-sm-12">
+<!--        <div class="col-lg-6">-->
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Свяжитесь с нами</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" action="" class="form-floating">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="name">Имя</label>
+                        <input type="text" name="name" class="form-control" id="name" placeholder="Ваше имя" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone">Телефон</label>
+                        <input type="text" name="phone" class="form-control" id="phone" placeholder="Контактный телефон"
+                               required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email">Почтовый адрес</label>
+                        <input type="email" name="email" class="form-control" id="email" placeholder="Ваш eMail"
+                               required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message">Сообщение</label>
+                        <textarea type="text" name="message" class="form-control" id="message"
+                                  placeholder="Ваше сообщение" required></textarea>
+
+                    </div>
+
+
+                    <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Отправить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-12">
+
+
+    <div class="card mb-3 box-shadow">
+
+        <div class="card-body">
+            <h5 class="card-title">Последние контакты</h5>
+            <p class="card-text">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Имя</th>
+                    <th scope="col">Телефон</th>
+                    <th scope="col">eMail</th>
+                    <th scope="col">Сообщение</th>
+                    <th scope="col">Время</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% load my_tags %}
+
+                {% if latest_contacts %}
+<!--                <p>КОНТЕКСТ ЕСТЬ</p>-->
+                {% else %}
+                    <p>Пока нет контактов</p>
+                {% endif %}
+
+                {% for object in latest_contacts %}
+
+                <tr>
+                    <td>{{object.name | initial_letter_filter}}</td>
+                    <td>{{object.phone}}</td>
+                    <td>{{object.email}}</td>
+                    <td>{{object.message | initial_letter_filter}}</td>
+                    <td>{{object.time}}</td>
+                </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+            </p>
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+{% endblock %}

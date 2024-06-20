@@ -1,0 +1,53 @@
+ {% extends 'services/base.html' %}
+{% load static %}
+
+<!DOCTYPE html>
+{% block icon %}
+    <title>Информация о рассылке</title>
+{% endblock %}
+
+</head>
+<body>
+
+{% block content %}
+
+  <div class="container">
+      <p class="lead">Тема рассылки: {{ mailing.name| title }} </p>
+
+    <div class="row">
+         <div class="col-md-4">
+          <div class="card mb-4 box-shadow">
+            <div class="card-body">
+                <span class="text-muted">Тема сообщения: {{ mailing.message }} </span><br>
+                <span class="text-muted">Периодичность: {{ mailing.periodicity }} </span><br>
+                <span class="text-muted">Начало рассылки: {{ mailing.start_time }} </span><br>
+                <span class="text-muted">Окончание рассылки: {{ mailing.end_time }} </span><br>
+                {% for item in mailing.client.all %}
+                   <span class="text-muted">Клиент: {{ item.name }}</span><br>
+                   <span class="text-muted">Почта клиента: {{ item.email }}</span><br>
+                {% endfor %}
+<!--                {% for i in mailing.message.all %}-->
+<!--                    <h4 class="my-0 fw-normal">Тема письма: {{ i.subject }} </h4>-->
+<!--                {% endfor %}-->
+            </div>
+            <div class="card-footer">
+                <a class="btn btn-link" href="{% url 'services:edit_mailing' mailing.pk%}">Изменить</a>
+                <a class="btn btn-link" href="{% url 'services:delete_mailing' mailing.pk%}">Удалить</a>
+                <a class="btn btn-link" href="{% url 'services:mailing_list'%}">Назад</a>
+<!--              {% if newsletter.owner == request.user or user.is_superuser or perms.services.change_newsletter%}-->
+<!--                <a class="btn btn-link" href="{% url 'services:edit_mailing' mailing.pk%}">Изменить</a>-->
+<!--              {% endif %}-->
+<!--              {% if user.is_superuser or newsletter.owner == request.user or perms.services.delete_mailing%}-->
+<!--                <a class="btn btn-link" href="{% url 'services:delete_mailing' mailing.pk%}">Удалить</a>-->
+<!--              {% endif %}-->
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+</body>
+</html>
+

@@ -11,12 +11,13 @@
 
 {% block content %}
   <main>
+    <div class="row row-cols-1 row-cols-md-4 mb-4 text-center">
     {% for client in clients_list %}
-        <div class="row row-cols-1 row-cols-md-3 mb-3 text-center">
-          <div class="col">
-            <div class="card mb-2 rounded-3 shadow-sm">
+
+          <div class="col-md-4">
+            <div class="card mb-4 rounded-3 shadow-sm">
               <div class="card-header py-3">
-                <h5 class="my-0 fw-normal">Ф.И.О клиента: {{ client.name | title }}</h5>
+                <h5 class="my-0 fw-normal">Клиент: {{ client.name | title }}</h5>
               </div>
               <div class="card-body">
                 <ul class="list-unstyled mt-3 mb-4">
@@ -30,8 +31,9 @@
               </div>
             </div>
           </div>
-        </div>
+
     {% endfor %}
+    </div>
   </main>
    <div class="col-12 mb-5">
       <a href="{% url 'services:create_client' %}" class="btn btn-outline-primary">Добавить клиента</a>

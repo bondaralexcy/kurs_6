@@ -1,0 +1,51 @@
+{% extends 'services/base.html' %}
+{% load static %}
+
+<!DOCTYPE html>
+{% block icon %}
+    <title>Список писем</title>
+{% endblock %}
+
+</head>
+<body>
+
+{% block content %}
+
+  <main>
+      <p>Количество рассылок: {{ mailing_count }} </p>
+      <p>Количество клиентов: {{ clients }} </p>
+
+    {% for mailing in mailing_list %}
+        <div class="row row-cols-1 row-cols-md-4 mb-3 text-center">
+          <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm">
+              <div class="card-header py-3">
+                <h4 class="my-0 fw-normal">{{ mailing.name }} </h4>
+              </div>
+              <div class="card-body">
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>Периодичность: {{ mailing.periodicity }}</li>
+<!--                  <li>Время рассылки: {{ mailing.start_time }} - {{ mailing.end_time }}</li>-->
+                  <li>Статус: {{ mailing.status }}</li>
+                  <li>Сообщение: {{ mailing.message }}</li>
+
+                </ul>
+                    <a type="button" href="{% url 'services:view_mailing' mailing.pk %}" >Посмотреть</a>
+                    <a type="button" href="{% url 'services:edit_mailing' mailing.pk %}" >Изменить</a>
+                    <a type="button" href="{% url 'services:delete_mailing' mailing.pk %}" >Удалить</a>
+              </div>
+            </div>
+          </div>
+        </div>
+    {% empty %}
+        <li>No mailings yet.</li>
+    {% endfor %}
+  </main>
+   <div class="col-12 mb-5">
+      <a href="{% url 'services:create_mailing' %}" class="btn btn-outline-primary">Добавить рассылку</a>
+   </div>
+{% endblock %}
+
+
+</body>
+</html>
