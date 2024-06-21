@@ -39,11 +39,13 @@ class LogsAdmin(admin.ModelAdmin):
         "attempt_status",
         "attempt_time",
         "response",
-    )
-    search_fields = (
         "client",
         "mailing",
     )
+    # search_fields = (
+    #     "client.name",
+    #     "mailing.name",
+    # )
 
 
 @admin.register(Contact)

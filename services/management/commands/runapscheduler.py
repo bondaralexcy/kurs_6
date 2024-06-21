@@ -11,6 +11,7 @@ from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 from django_apscheduler import util
 from django.utils import timezone
+from services.mailing_task import send_email
 
 logger = logging.getLogger(__name__)
 
@@ -18,8 +19,10 @@ logger = logging.getLogger(__name__)
 def my_job():
     # Your job processing logic here...
     # pass
+
     now = timezone.localtime(timezone.now())
-    print("Now : ", now)
+    print(f"\nStart mailing: {now}")
+    send_email()
 
 
 # The `close_old_connections` decorator ensures that database connections, that have become
@@ -63,9 +66,7 @@ class Command(BaseCommand):
             max_instances=1,
             replace_existing=True,
         )
-        logger.info(
-            "Added weekly job: 'delete_old_job_executions'."
-        )
+        logger.info("Added weekly job: 'delete_old_job_executions'.")
 
         try:
             logger.info("Starting scheduler...")

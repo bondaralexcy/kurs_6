@@ -15,9 +15,16 @@ from django.views.generic import (
 # from blog.models import Blog
 from services.models import Client, Message, Mailing, Contact, Logs
 from services.forms import ClientForm, MessageForm, MailingForm
-
+from services.mailing_task import send_email
 # from services.services import homepage_cache
 
+
+def poster(request, *args, **kwargs):
+    if request.method == "POST":
+        send_email()
+
+    context = {"title": "Сервис клиентских рассылок"}
+    return render(request, 'services/script_form.html', context)
 
 class Homepage(TemplateView):
     Model = Logs
@@ -308,22 +315,3 @@ def contacts(request):
 
     return render(request, "services/contacts.html", context)
 
-
-# class ContactTemplateView(TemplateView):
-#     template_name = 'services/bad_contacts.html'
-#     extra_context = {'title': 'Контакты'}
-#
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["latest_contacts"] = Contact.objects.all()[:5]
-#         # contact_info = Contact.objects.all()
-#         # context['contact_book'] = contact_info
-#         return context
-#
-#     def post(self, request):
-#         name = request.POST.get('name')
-#         phone = request.POST.get('phone')
-#         email = request.POST.get('email')
-#         print(f'Имя:{name} , номер телефона:{phone} , эл.почта: {email}')
-#         return render(request, self.template_name)

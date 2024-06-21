@@ -2,6 +2,7 @@ from django.urls import path
 from services.apps import ServicesConfig
 from services.views import Homepage
 from services.views import ContactsPageViews
+from services.views import poster
 from services.views import (
     ClientCreateView,
     ClientListView,
@@ -49,4 +50,5 @@ urlpatterns = [
     path("mailing/view/<int:pk>", MailingDetailView.as_view(), name="view_mailing"),
     path("mailing/delete/<int:pk>", MailingDeleteView.as_view(), name="delete_mailing"),
     path("logs/", LogsListView.as_view(), name="logs_list"),
+    path("poster/", poster, name="poster"),
 ]
