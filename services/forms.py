@@ -1,15 +1,20 @@
-from django import forms
+from django.forms import ModelForm
 from services.models import Client, Message, Mailing, Logs
 
 
-class ClientForm(forms.ModelForm):
+class ClientForm(ModelForm):
     class Meta:
         model = Client
-        fields = (
-            "name",
-            "email",
-            "comment",
-        )
+        # Перечислить нужные поля
+        # fields = (
+        #     "name",
+        #     "email",
+        #     "comment",
+        # )
+        # В случае, если все поля
+        fields = "__all__"
+        # Можно задать исключение полей
+        # exclude ("owner",)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -17,7 +22,7 @@ class ClientForm(forms.ModelForm):
             field.widget.attrs["class"] = "form-control"
 
 
-class MessageForm(forms.ModelForm):
+class MessageForm(ModelForm):
     class Meta:
         model = Message
         fields = (
@@ -31,7 +36,7 @@ class MessageForm(forms.ModelForm):
             field.widget.attrs["class"] = "form-control"
 
 
-class MailingForm(forms.ModelForm):
+class MailingForm(ModelForm):
     class Meta:
         model = Mailing
         fields = (
