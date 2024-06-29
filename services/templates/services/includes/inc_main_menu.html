@@ -8,6 +8,15 @@
         <li><a href="{% url 'services:poster' %}" class="text-white">Старт!</a></li>
         <li><a href="{% url 'services:logs_list' %}" class="text-white">Отчет о рассылках</a></li>
         <li><a href="{% url 'services:contacts' %}" class="text-white">Контакты</a></li>
-        <li><a href="#" class="text-white">Блог</a></li>
+        <li><a href="{% url 'blog:blog_list' %}" class="text-white">Блог</a></li>
+        <hr>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'users:reset_password' %}" class="text-white">Сброс пароля</a></li>
+          <li><a href="{% url 'users:profile' %}" class="text-white">Профиль</a></li>
+          <li><a href="{% url 'users:logout' %}" class="text-white">Выход</a></li>
+        {% else %}
+          <li><a href="{% url 'users:login' %}" class="text-white">Вход</a></li>
+          <li><a href="{% url 'users:register' %}" class="text-white">Регистрация</a></li>
+        {% endif %}
     </ul>
 </div>

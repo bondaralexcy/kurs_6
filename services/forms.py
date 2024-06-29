@@ -1,20 +1,24 @@
+from django import forms
 from django.forms import ModelForm
 from services.models import Client, Message, Mailing, Logs
 
 
-class ClientForm(ModelForm):
+class StyleFormMixin:
+    """Класс-миксин для оформления в едином стиле"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if not isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs["class"] = "form-control"
+
+
+
+class ClientForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Client
-        # Перечислить нужные поля
-        # fields = (
-        #     "name",
-        #     "email",
-        #     "comment",
-        # )
-        # В случае, если все поля
         fields = "__all__"
-        # Можно задать исключение полей
-        # exclude ("owner",)
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

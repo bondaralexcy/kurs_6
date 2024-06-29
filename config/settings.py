@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "services",
     "django_apscheduler",
+    "phonenumber_field",
+    "users",
+    "blog",
 ]
 
 MIDDLEWARE = [
@@ -163,3 +166,8 @@ EMAIL_USE_SSL = True
 # that supports multiple background worker processes instead (e.g. Dramatiq, Celery, Django-RQ,
 # etc. See: https://djangopackages.org/grids/g/workers-queues-tasks/ for popular options).
 # APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
+
+AUTH_USER_MODEL = "users.User"
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
