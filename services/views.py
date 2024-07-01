@@ -1,32 +1,30 @@
-from django.shortcuts import render
-
-# from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
-from django.http import Http404
-from django.urls import reverse_lazy
+from django.shortcuts import render, get_object_or_404
+from django.forms import inlineformset_factory
 from django.views.generic import (
-    CreateView,
-    UpdateView,
     ListView,
     DetailView,
+    CreateView,
+    UpdateView,
     DeleteView,
     TemplateView,
 )
+from django.urls import reverse_lazy, reverse
+from pytils.translit import slugify
 
-# from blog.models import Blog
 from services.models import Client, Message, Mailing, Contact, Logs
 from services.forms import ClientForm, MessageForm, MailingForm
-from services.mailing_task import send_email
+# from services.mailing_task import send_email
 # from services.services import homepage_cache
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
+# from services.services import get_categories_from_cache, get_products_from_cache
+from blog.models import Blog
 
 
-def poster(request, *args, **kwargs):
-    if request.method == "POST":
-        send_email()
-
-    context = {"title": "Сервис клиентских рассылок"}
-    return render(request, 'services/script_form.html', context)
 
 class Homepage(TemplateView):
+    """ Открывает главную форму проекта
+    """
     Model = Logs
     template_name = "services/base.html"
     # random_article = Blog.objects.order_by('?')[:3]
@@ -47,10 +45,10 @@ class Homepage(TemplateView):
 
 
 class LogsListView(ListView):
+    """ Выводит форму со статистикой рассылок"""
     model = Logs
     success_url = reverse_lazy("services:logs_list")
     extra_context = {"title": "Статистика рассылок"}
-    # login_url = 'users:login'
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
@@ -65,94 +63,116 @@ class LogsListView(ListView):
         return context_data
 
 
-class ClientListView(ListView):
+class ClientListView(LoginRequiredMixin, ListView):
+    """ Контроллер вывода списка клиентов
+    """
     model = Client
     success_url = reverse_lazy("services:client_list")
     extra_context = {"title": "Список клиентов сервиса"}
-    # login_url = 'users:login'
+    login_url = 'users:login'
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = queryset.filter(id=self.kwargs.get("pk"))
-        # if not self.request.user.is_staff:
-        #     queryset = queryset.filter(owner=self.request.user)
-
-        return queryset
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        context_data["clients_list"] = Client.objects.all()
+        clients = Client.objects.all()
+        context_data["clients_list"] = clients.filter(owner=self.request.user, is_active=True)
         return context_data
 
 
-class ClientCreateView(CreateView):
+class ClientCreateView(LoginRequiredMixin, CreateView):
     model = Client
     form_class = ClientForm
     # Если используется форма ввода, то перечень полей не нужен
     # fields = ('name', 'email', 'comment',)
     success_url = reverse_lazy("services:client_list")
     extra_context = {"title": "Новый клиент"}
-    # login_url = 'users:login'
+    login_url = 'users:login'
 
-    # def form_valid(self, form):
-    #   # Используется для заполнения поля  'owner'
-    #     self.object = form.save()
-    #     self.object.owner = self.request.user
-    #     self.object.save()
-    #
-    #     return super().form_valid(form)
+    def form_valid(self, form):
+      # Вызываем для заполнения поля 'owner'
+        self.object = form.save()
+        self.object.owner = self.request.user
+        self.object.save()
+        return super().form_valid(form)
 
 
-class ClientUpdateView(UpdateView):
+class ClientUpdateView(LoginRequiredMixin, UpdateView):
     model = Client
-    # fields = ('name', 'email', 'comment',)
     form_class = ClientForm
     success_url = reverse_lazy("services:client_list")
     extra_context = {"title": "Обновление информации о клиенте"}
-    # login_url = 'users:login'
 
-    # def get_object(self, queryset=None):
-    ## Используется для проверки прав доступа к методу Update
-    # self.object = super().get_object(queryset)
-    # if self.object.owner == self.request.user or self.request.user.is_superuser:
-    #     return self.object
-    # else:
-    #     raise Http404
+    def get_object(self, queryset=None):
+        # Используется для проверки прав доступа к методу Update
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner or self.request.user.is_superuser:
+            return self.object
+        raise PermissionDenied
+
+
+    def get_form_class(self):
+        """ Открываем форму, зависящую от прав доступа
+            и принадлежности пользователя к группе Manager"""
+        user = self.request.user
+        if user == self.object.owner or user.is_superuser:
+            # для владельца товара
+            return ClientForm
+        elif (user.has_perm('services.can_reset_status')):
+            # для Модератора
+            # return ClientModeratorForm
+            return ClientForm
+        else:
+            return ClientForm
+
+        raise PermissionDenied
 
 
 class ClientDetailView(DetailView):
     model = Client
     extra_context = {"title": "Информация о клиенте"}
-    # login_url = 'users:login'
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.request.user == self.object.owner or self.request.user.is_superuser:
+            return self.object
+        raise PermissionDenied
 
 
 class ClientDeleteView(DeleteView):
     model = Client
     extra_context = {"title": "Удаление информации о клиенте"}
     success_url = reverse_lazy("services:client_list")
-    # login_url = 'users:login'
 
 
-class MessageListView(ListView):
+    # def get_object(self, queryset=None):
+    #     self.object = super().get_object(queryset)
+    #     if self.request.user == self.object.owner or self.request.user.is_superuser:
+    #         return self.object
+    #     raise PermissionDenied
+
+class MessageListView(LoginRequiredMixin, ListView):
     model = Message
     success_url = reverse_lazy("services:message_list")
     extra_context = {"title": "СООБЩЕНИЯ"}
-    # login_url = 'users:login'
+    login_url = 'users:login'
 
     def get_context_data(self, *args, **kwargs):
         context_data = super().get_context_data(*args, **kwargs)
-        context_data["message_list"] = Message.objects.all()
+        # mess = Message.objects.all()
+        # context_data["messages_list"] = mess.filter(owner=self.request.user)
         return context_data
 
 
-class MessageCreateView(CreateView):
+
+class MessageCreateView(LoginRequiredMixin, CreateView):
     model = Message
     form_class = MessageForm
     success_url = reverse_lazy("services:message_list")
     extra_context = {"title": "Создание сообщения"}
-    # login_url = 'users:login'
+    login_url = 'users:login'
 
     # def form_valid(self, form):
+    #     # Вызываем для заполнения поля Владелец сообщения
     #     self.object = form.save()
     #     self.object.owner = self.request.user
     #     self.object.save()
@@ -160,12 +180,12 @@ class MessageCreateView(CreateView):
     #     return super().form_valid(form)
 
 
-class MessageUpdateView(UpdateView):
+class MessageUpdateView(LoginRequiredMixin, UpdateView):
     model = Message
     form_class = MessageForm
     success_url = reverse_lazy("services:message_list")
     extra_context = {"title": "Редактирование сообщения"}
-    # login_url = 'users:login'
+    login_url = 'users:login'
 
     # def get_object(self, queryset=None):
     #     self.object = super().get_object(queryset)
@@ -179,66 +199,104 @@ class MessageDetailView(DetailView):
     extra_context = {"title": "Сообщение"}
 
 
-class MessageDeleteView(DeleteView):
+class MessageDeleteView(LoginRequiredMixin, DeleteView):
     model = Message
     extra_context = {"title": "Удаление сообщения"}
     success_url = reverse_lazy("services:message_list")
-    # login_url = 'users:login'
+    login_url = 'users:login'
 
 
-class MailingListView(ListView):
+class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
     success_url = reverse_lazy("services:mailing_list")
     extra_context = {"title": "РАССЫЛКИ"}
-    # login_url = 'users:login'
+    login_url = 'users:login'
     # permission_required = 'services.view_mailing'
 
-    def get_context_data(self, *args, **kwargs):
-        context_data = super().get_context_data(*args, **kwargs)
-        context_data["mailing_list"] = Mailing.objects.all()
-        unique_clients = Client.objects.all().count()
-        context_data["clients"] = unique_clients
-        context_data["mailing_count"] = Mailing.objects.all().count()
-        return context_data
+    # def get_context_data(self, *args, **kwargs):
+    #     context_data = super().get_context_data(*args, **kwargs)
+    #     context_data["mailing_list"] = Mailing.objects.all()
+    #     unique_clients = Client.objects.all().count()
+    #     context_data["clients"] = unique_clients
+    #     context_data["mailing_count"] = Mailing.objects.all().count()
+    #     return context_data
 
     # def get_queryset(self):
+    #     """ Реализуем для пользователя request.user отбор только собственных активных рассылок"""
     #     queryset = super().get_queryset()
-    #     queryset = queryset.filter(id=self.kwargs.get('pk'))
-    #     # if not self.request.user.is_staff:
-    #     #     queryset = queryset.filter(owner = self.request.user)
+    #     # queryset = queryset.filter(id=self.kwargs.get('pk'))
+    #     if not self.request.user.is_staff:
+    #         queryset = queryset.filter(owner=self.request.user, is_active=True)
+    #     else:
+    #         queryset = queryset.filter(is_active=True)
+    #
     #     return queryset
+    def get_queryset(self, queryset=None):
+        queryset = super().get_queryset()
+        user = self.request.user
+        if user.is_superuser and not user.has_perm("view_all_mailings"):
+            raise PermissionDenied
+        else:
+            return queryset
 
 
-class MailingCreateView(CreateView):
+
+class MailingCreateView(LoginRequiredMixin,CreateView):
     model = Mailing
     form_class = MailingForm
     success_url = reverse_lazy("services:mailing_list")
     extra_context = {"title": "Создание рассылки"}
-    # login_url = 'users:login'
+    login_url = 'users:login'
 
-    # def form_valid(self, form):
-    #     self.object = form.save()
-    #     self.object.owner = self.request.user
-    #     self.object.save()
+    def form_valid(self, form):
+        # Вызываем для заполнения поля Владелец рассылки
+        self.object = form.save()
+        self.object.owner = self.request.user
+        self.object.save()
 
-    # return super().form_valid(form)
+        return super().form_valid(form)
 
 
-class MailingUpdateView(UpdateView):
+class MailingUpdateView(LoginRequiredMixin, UpdateView):
     model = Mailing
-    fields = (
-        "name",
-        "status",
-        "periodicity",
-        "start_time",
-        "end_time",
-        "client",
-        "message",
-        "description",
-    )
+    form_class = MailingForm
     success_url = reverse_lazy("services:mailing_list")
-    extra_context = {"title": "Редактирование рассылки"}
-    # login_url = 'users:login'
+    extra_context = {"title": "Редактирование сообщения"}
+    login_url = 'users:login'
+
+
+
+
+# class MailingCreateView(CreateView):
+#     model = Mailing
+#     success_url = reverse_lazy("services:mailing_list")
+#     extra_context = {"title": "Создание рассылки"}
+#     fields = (
+#         "name",
+#         "status",
+#         "periodicity",
+#         "start_time",
+#         "end_time",
+#         "message",
+#         "description",
+#         "clients"
+#     )
+
+# class MailingUpdateView(UpdateView):
+#     model = Mailing
+#     fields = (
+#         "name",
+#         "status",
+#         "periodicity",
+#         "start_time",
+#         "end_time",
+#         "client",
+#         "message",
+#         "description",
+#     )
+#     success_url = reverse_lazy("services:mailing_list")
+#     extra_context = {"title": "Редактирование рассылки"}
+#     login_url = 'users:login'
 
     # def get_object(self, queryset=None):
     #     self.object = super().get_object(queryset)

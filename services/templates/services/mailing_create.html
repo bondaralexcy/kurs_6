@@ -18,15 +18,10 @@
          <div class="col-md-4">
           <div class="card mb-4 box-shadow">
             <div class="card-body">
-
-                <span class="text-muted">Тема письма: {{ mailing.message }} </span><br>
+                <span class="text-muted">Тема сообщения: {{ mailing.message }} </span><br>
                 <span class="text-muted">Периодичность: {{ mailing.periodicity }} </span><br>
-                <span class="text-muted">Описание: {{ mailing.description }} </span><br>
-                <span class="text-muted">Статус: {{ mailing.status }} </span><br>
                 <span class="text-muted">Начало рассылки: {{ mailing.start_time }} </span><br>
                 <span class="text-muted">Окончание рассылки: {{ mailing.end_time }} </span><br>
-                <span class="text-muted">Создатель: {{ mailing.owner }} </span><br>
-
                 {% for item in mailing.client.all %}
                    <span class="text-muted">Клиент: {{ item.name }}</span><br>
                    <span class="text-muted">Почта клиента: {{ item.email }}</span><br>

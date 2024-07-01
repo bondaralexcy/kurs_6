@@ -17,44 +17,20 @@ class StyleFormMixin:
 class ClientForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Client
-        fields = "__all__"
+        exclude = ("owner", "is_active",)
 
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            field.widget.attrs["class"] = "form-control"
 
-
-class MessageForm(ModelForm):
+class MessageForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Message
-        fields = (
-            "subject",
-            "body",
-        )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            field.widget.attrs["class"] = "form-control"
+        exclude = ("owner", )
 
 
-class MailingForm(ModelForm):
+
+class MailingForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Mailing
-        fields = (
-            "name",
-            "status",
-            "periodicity",
-            "start_time",
-            "end_time",
-            "client",
-            "message",
-            "description",
-        )
+        exclude = ("clients","owner","is_active",)
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field_name, field in self.fields.items():
-            field.widget.attrs["class"] = "form-control"
+

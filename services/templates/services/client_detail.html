@@ -10,17 +10,19 @@
 <body>
 
 {% block content %}
-<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-<!--    <h1 class="display-4">SkyService</h1>-->
-    <p class="lead">Клиент: {{ client.name | title }}</p>
-</div>
+
   <div class="container">
     <div class="row">
          <div class="col-md-4">
           <div class="card mb-4 box-shadow">
+              <div class="card-header py-3">
+                <h3 class="my-0 fw-normal">Клиент: {{ client.name | title }}</h3>
+              </div>
             <div class="card-body">
               <span class="text-muted">eMail: {{ client.email }}</span><br>
-              <span class="text-muted">Комментарий: {{ client.comment }}</span>
+              <span class="text-muted">Комментарий: {{ client.comment }}</span><br>
+                <span class="text-muted">Создал: {{ client.owner }}</span><br>
+                <span class="text-muted">В рассылке: {{ mailing.client }}</span>
             </div>
             <div class="card-footer">
               <a class="btn btn-link" href="{% url 'services:edit_client' client.pk%}">Изменить</a>

@@ -1,29 +1,9 @@
 from django.db import models
 from django.utils import timezone
-
+from users.models import User
 # from django.conf import settings
 
 NULLABLE = {"null": True, "blank": True}
-
-
-class Client(models.Model):
-    """Класс для клиентов"""
-
-    name = models.CharField(max_length=100, verbose_name="ФИО")
-    email = models.EmailField(
-        max_length=100, verbose_name="Электронная почта", unique=True
-    )
-
-    comment = models.TextField(verbose_name="Комментарий", **NULLABLE)
-    # owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,verbose_name='владелец',**NULLABLE)
-
-    def __str__(self):
-        return f"ФИО: {self.name}, eMail: {self.email}"
-
-    class Meta:
-        verbose_name = "Клиент"
-        verbose_name_plural = "Клиенты"
-        ordering = ("name",)
 
 
 class Message(models.Model):
@@ -31,7 +11,10 @@ class Message(models.Model):
 
     subject = models.CharField(max_length=50, verbose_name="Тема")
     body = models.TextField(verbose_name="Сообщение")
-    # owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,verbose_name='владелец',**NULLABLE)
+    # mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name='Рассылка', **NULLABLE)
+    # owner = models.ForeignKey(
+    #     User, verbose_name="Владелец", on_delete=models.SET_NULL, **NULLABLE
+    # )
 
     def __str__(self):
         return self.subject
@@ -39,6 +22,7 @@ class Message(models.Model):
     class Meta:
         verbose_name = "Сообщение"
         verbose_name_plural = "Сообщения"
+
 
 
 class Mailing(models.Model):
@@ -60,8 +44,8 @@ class Mailing(models.Model):
     created = "создана"
     launched = "запущена"
     Status = [(finished, "завершена"), (created, "создана"), (launched, "запущена")]
-    name = models.CharField(max_length=150, verbose_name="Название", **NULLABLE)
 
+    name = models.CharField(max_length=150, verbose_name="Название", **NULLABLE)
     status = models.CharField(
         max_length=20,
         choices=Status,
@@ -69,7 +53,7 @@ class Mailing(models.Model):
         verbose_name="Статус рассылки",
     )
     periodicity = models.CharField(
-        max_length=20, choices=Periodicity, default=daily, verbose_name="периодичность"
+        max_length=100, choices=Periodicity, default=daily, verbose_name="периодичность"
     )
     start_time = models.DateTimeField(
         verbose_name="время начала отправки рассылки", **NULLABLE
@@ -77,23 +61,56 @@ class Mailing(models.Model):
     end_time = models.DateTimeField(
         verbose_name="время окончания отправки рассылки", **NULLABLE
     )
-    client = models.ManyToManyField(Client, verbose_name="Kлиенты для рассылки")
+    # clients = models.ToManyField(Client, related_name='mailing', verbose_name="Клиенты для рассылки")
     message = models.ForeignKey(
         Message, on_delete=models.CASCADE, verbose_name="Сообщение", **NULLABLE
     )
     description = models.TextField(verbose_name="Описание", **NULLABLE)
-    # owner = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.SET_NULL,verbose_name='владелец',**NULLABLE)
+    is_active = models.BooleanField(verbose_name="Активная", default=True)
+    owner = models.ForeignKey(
+        User, verbose_name="Владелец", on_delete=models.SET_NULL, **NULLABLE
+    )
+
 
     def __str__(self):
-        return f"Время: {self.start_time} - {self.end_time}, Статус: {self.status}, Периодичность: {self.periodicity}"
+        return self.name
+
+        # return f"Время: {self.start_time} - {self.end_time}, Статус: {self.status}, Периодичность: {self.periodicity}"
 
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
+        # Добавляем отдельные права для менеджера
+        permissions = [
+            ('can_reset_status', 'Can change mailing status'),
+        ]
 
-        # permissions = [
-        #     ('change_status', 'Can change newsletters status'),
-        # ]
+
+
+class Client(models.Model):
+    """Класс для клиентов"""
+
+    name = models.CharField(max_length=100, verbose_name="ФИО")
+    email = models.EmailField(
+        max_length=100, verbose_name="Электронная почта"
+    )
+    comment = models.TextField(verbose_name="Комментарий", **NULLABLE)
+    mailing = models.ManyToManyField(Mailing, verbose_name="Рассылка", related_name='client')
+    is_active = models.BooleanField(verbose_name="Активный", default=True)
+    owner = models.ForeignKey(
+        User, verbose_name="Владелец", on_delete=models.SET_NULL, **NULLABLE
+    )
+
+    def __str__(self):
+        return {self.name}
+
+    class Meta:
+        verbose_name = "Клиент"
+        verbose_name_plural = "Клиенты"
+        ordering = ("name",)
+
+
+
 
 
 class Logs(models.Model):
@@ -135,7 +152,7 @@ class Contact(models.Model):
     )
 
     def __str__(self):
-        return f"{self.name} - {self.phone}"
+        return f"{self.name} - {self.email}"
 
     class Meta:
         verbose_name = "Контакт"

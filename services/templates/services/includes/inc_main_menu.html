@@ -11,6 +11,14 @@
         <li><a href="{% url 'blog:blog_list' %}" class="text-white">Блог</a></li>
         <hr>
         {% if user.is_authenticated %}
+        <style>
+            .orange {color:#fa8e47;}
+            .white {color:white;}
+        </style>
+        <li><span class="white">Текущий пользователь</span></li>
+        <li><span class="orange">{{ user }}</span></li>
+
+          <hr>
           <li><a href="{% url 'users:reset_password' %}" class="text-white">Сброс пароля</a></li>
           <li><a href="{% url 'users:profile' %}" class="text-white">Профиль</a></li>
           <li><a href="{% url 'users:logout' %}" class="text-white">Выход</a></li>

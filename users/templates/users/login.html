@@ -1,0 +1,21 @@
+{% extends 'services/base.html' %}
+{% block content %}
+<div class="col-12">
+    <form class="row" method="post" enctype="multipart/form-data">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                   <div class="card-header">
+                       <h5 class="card-title">Авторизация</h5>
+                   </div>
+                   {% csrf_token %}
+                   {{ form.as_p }}
+                    <button type="submit" class="btn btn-success">
+                        Войти
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

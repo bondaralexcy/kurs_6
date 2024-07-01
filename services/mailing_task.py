@@ -1,25 +1,14 @@
-import smtplib
+from django.shortcuts import render, get_object_or_404
 from django.core.mail import send_mail
 from django.conf import settings
 from services.models import Client, Message, Mailing, Logs
 from datetime import datetime, timedelta
 import pytz
-
-# def my_scheduled_job():
-#     Client.objects.create(email='jack@mail.com',fio='jack logan',comment='bro')
-# def sending_mail():
-#     """ Прототип функции отправки сообщений
-#         Проверка работоспособности почтового сервиса"""
-#     print(settings.EMAIL_HOST_USER)
-#     send_mail('Приветствие',
-#               'Общее обращение',
-#               settings.EMAIL_HOST_USER,
-#               [settings.EMAIL_HOST_USER]
-#               )
-
+import smtplib
 
 def send_email():
-    """Отправка подготовленных рассылок"""
+    """ Отправка подготовленных рассылок
+    """
     for newsletter in Mailing.objects.all():
         # Цикл по всем рассылкам
         native_datetime = datetime.now()
@@ -94,3 +83,15 @@ def send_email():
             newsletter.status = "создана"
             print(f"Еще не время. Статус: {newsletter.status}")
         newsletter.save()
+
+
+def poster(request, *args, **kwargs):
+    """
+    Вызывается из меню
+    Открывает форму однократного запуска рассылки сообщений
+    """
+    if request.method == "POST":
+        send_email()
+
+    context = {"title": "Сервис клиентских рассылок"}
+    return render(request, 'services/script_form.html', context)

@@ -11,33 +11,46 @@
 
 {% block content %}
   <main>
-    <div class="row row-cols-1 row-cols-md-4 mb-4 text-center">
-    {% for client in clients_list %}
+    {% if user.is_authenticated %}
+    <div class="col-12 mb-5">
+        <a class="btn btn-outline-primary" href="{% url 'services:create_client' %}">Добавить клиента</a>
+    </div>
+    {% endif %}
 
-          <div class="col-md-4">
-            <div class="card mb-4 rounded-3 shadow-sm">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+    {% for client in clients_list %}
+        <div class="col">
+          <div class="card mb-4 box-shadow">
               <div class="card-header py-3">
-                <h5 class="my-0 fw-normal">Клиент: {{ client.name | title }}</h5>
+                <h3 class="my-0 fw-normal">Клиент: {{ client.name | title }}</h3>
               </div>
-              <div class="card-body">
-                <ul class="list-unstyled mt-3 mb-4">
-                    <li>{{ client.comment }}</li>
-                    <li>eMail: {{ client.email }}</li>
-                </ul>
+            <div class="card-body">
+              <p class="card-text">
+              <span class="text-muted">eMail: {{ client.email }}</span><br>
+              <span class="text-muted">Комментарий: {{ client.comment }}</span><br>
+              <span class="text-muted">Создал: {{ client.owner }}</span>
+
+              </p>
                 <hr>
-                <a type="button" href="{% url 'services:view_client' client.pk%}" >Просмотр</a>
-                <a type="button" href="{% url 'services:edit_client' client.pk%}" >Изменить</a>
-                <a type="button" href="{% url 'services:delete_client' client.pk%}" >Удалить</a>
-              </div>
+                <div class="container-buttons">
+                  {% if user == client.owner or user.is_superuser %}
+                    <a href="{% url 'services:view_client' client.pk %}">Посмотреть</a>
+                    <a href="{% url 'services:edit_client' client.pk %}">Редактировать</a>
+                    <a href="{% url 'services:delete_client' client.pk %}">Удалить</a>
+
+                  {% elif perms.services.can_edit_description%}
+                    <a href="{% url 'services:edit_client' client.pk %}">Редактировать</a>
+                  {% endif %}
+                </div>
+
             </div>
           </div>
+        </div>
 
     {% endfor %}
     </div>
   </main>
-   <div class="col-12 mb-5">
-      <a href="{% url 'services:create_client' %}" class="btn btn-outline-primary">Добавить клиента</a>
-   </div>
+
 {% endblock %}
 
 

@@ -2,7 +2,7 @@ from django.urls import path
 from services.apps import ServicesConfig
 from services.views import Homepage
 from services.views import ContactsPageViews
-from services.views import poster
+from services.mailing_task import poster
 from services.views import (
     ClientCreateView,
     ClientListView,
