@@ -28,7 +28,7 @@ class Homepage(TemplateView):
     Model = Logs
     template_name = "services/base.html"
     # random_article = Blog.objects.order_by('?')[:3]
-    random_article = Logs.objects.all()
+    # random_article = Logs.objects.all()
     extra_context = {"title": "Сервис клиентских рассылок"}
 
     def get_context_data(self, *args, **kwargs):
@@ -87,13 +87,26 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
     success_url = reverse_lazy("services:client_list")
     extra_context = {"title": "Новый клиент"}
     login_url = 'users:login'
+    redirect_field_name = "login"
+
 
     def form_valid(self, form):
       # Вызываем для заполнения поля 'owner'
-        self.object = form.save()
-        self.object.owner = self.request.user
-        self.object.save()
+        client = form.save()
+        user = self.request.user
+        client.owner = user
+        client.save()
+
+        # self.object = form.save()
+        # self.object.owner = self.request.user
+        # self.object.save()
         return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
 
 
 class ClientUpdateView(LoginRequiredMixin, UpdateView):
@@ -126,6 +139,12 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
 
         raise PermissionDenied
 
+
+
+    # def get_form_kwargs(self):
+    #     kwargs = super().get_form_kwargs()
+    #     kwargs['user'] = self.request.user
+    #     return kwargs
 
 class ClientDetailView(DetailView):
     model = Client
@@ -213,13 +232,14 @@ class MailingListView(LoginRequiredMixin, ListView):
     login_url = 'users:login'
     # permission_required = 'services.view_mailing'
 
-    # def get_context_data(self, *args, **kwargs):
-    #     context_data = super().get_context_data(*args, **kwargs)
-    #     context_data["mailing_list"] = Mailing.objects.all()
-    #     unique_clients = Client.objects.all().count()
-    #     context_data["clients"] = unique_clients
-    #     context_data["mailing_count"] = Mailing.objects.all().count()
-    #     return context_data
+    def get_context_data(self, *args, **kwargs):
+        context_data = super().get_context_data(*args, **kwargs)
+        # context_data["mailing_list"] = Mailing.objects.all()
+        context_data["mailing_list"] = Mailing.objects.filter(owner=self.request.user, is_active=True)
+        unique_clients = Client.objects.filter(owner=self.request.user, is_active=True).count()
+        context_data["clients"] = unique_clients
+        context_data["mailing_count"] = Mailing.objects.filter(owner=self.request.user, is_active=True).count()
+        return context_data
 
     # def get_queryset(self):
     #     """ Реализуем для пользователя request.user отбор только собственных активных рассылок"""

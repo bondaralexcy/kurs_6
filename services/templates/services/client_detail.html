@@ -22,7 +22,8 @@
               <span class="text-muted">eMail: {{ client.email }}</span><br>
               <span class="text-muted">Комментарий: {{ client.comment }}</span><br>
                 <span class="text-muted">Создал: {{ client.owner }}</span><br>
-                <span class="text-muted">В рассылке: {{ mailing.client }}</span>
+                <span class="text-muted">В рассылке: {{ mailing_clients.all }}</span>
+
             </div>
             <div class="card-footer">
               <a class="btn btn-link" href="{% url 'services:edit_client' client.pk%}">Изменить</a>

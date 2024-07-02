@@ -6,7 +6,6 @@
     <title>Добавить клиента</title>
 {% endblock %}
 
-
 {% block content %}
     <div class="col-12">
             <form class='row' method="post" enctype="multipart/form-data">
@@ -14,7 +13,11 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="card-header">
-                                <h3 class="card-title">Создать клиента</h3>
+                                {% if client %}
+                                    <h5 class="card-title">Изменить клиента</h5>
+                                {% else %}
+                                    <h5 class="card-title">Создать клиента</h5>
+                                {% endif %}
                             </div>
                                 {% csrf_token %}
                                 {{ form.as_p }}

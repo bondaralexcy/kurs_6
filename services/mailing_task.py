@@ -15,9 +15,9 @@ def send_email():
         now = native_datetime.replace(tzinfo=pytz.utc)
         print("\n")
         print(newsletter.name)
-        # print(newsletter.start_time)
-        # print(now)
-        # print(newsletter.end_time)
+        print(newsletter.start_time)
+        print(now)
+        print(newsletter.end_time)
         if newsletter.start_time < now < newsletter.end_time:
             # Если настадо время, то меняем статус рассылки и отправляем сообщение
             newsletter.status = "запущена"
@@ -28,13 +28,13 @@ def send_email():
             for client in clients:
                 clients_email.append(getattr(client, "email"))
 
-            # print(f"Список мейлов клиентов: {clients_email}")
+            print(f"Список мейлов клиентов: {clients_email}")
             try:
                 # Отправляем сообщение адресатам
                 print(f"Отправляем сообщение: {newsletter.message.subject}")
-                # print(newsletter.message.body)
-                # print(settings.EMAIL_HOST_USER)
-                # print(clients_email)
+                print(newsletter.message.body)
+                print(settings.EMAIL_HOST_USER)
+                print(clients_email)
                 send_mail(
                     subject=newsletter.message.subject,
                     message=newsletter.message.body,

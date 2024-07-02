@@ -95,10 +95,10 @@ class Client(models.Model):
         max_length=100, verbose_name="Электронная почта"
     )
     comment = models.TextField(verbose_name="Комментарий", **NULLABLE)
-    mailing = models.ManyToManyField(Mailing, verbose_name="Рассылка", related_name='client')
+    mailing = models.ManyToManyField(Mailing, verbose_name="Рассылка", related_name='clients')
     is_active = models.BooleanField(verbose_name="Активный", default=True)
     owner = models.ForeignKey(
-        User, verbose_name="Владелец", on_delete=models.SET_NULL, **NULLABLE
+        User, verbose_name="Владелец", on_delete=models.SET_NULL, **NULLABLE, related_name='clients'
     )
 
     def __str__(self):

@@ -15,9 +15,18 @@ class StyleFormMixin:
 
 
 class ClientForm(StyleFormMixin, ModelForm):
+
+    def __init__(self, user, *args, **kwargs):
+        """ Фильтруем рассылки
+            Аргумент user передан в форму с помощью метода get_form_kwargs (см. ClientCreateView)
+        """
+        super().__init__(*args, **kwargs)
+        self.fields['mailing'].queryset = Mailing.objects.filter(owner=user)
+
     class Meta:
         model = Client
         exclude = ("owner", "is_active",)
+
 
 
 
