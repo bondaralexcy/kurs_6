@@ -67,11 +67,33 @@
                       <br><p>Общее количество рассылок: {{total_count}}</p>
                       <p>Общее количество успешных рассылок: {{successful_count}}</p>
                       <p>Общее количество неуспешных рассылок: {{unsuccessful_count}}</p>
+                      <p>Количество уникальных клиентов для рассылок: {{emails_unique_count}}</p> <br>
                     </div>
                 </div>
 
-
-
+                <div class="card-body">
+                  <caption><h2>Записи в блогах</h2></caption>
+                  <table class="table table-striped">
+                      <tr>
+                        <th>Заголовок</th>
+                        <th>Дата публикации</th>
+                        <th>Кол-во просмотров</th>
+                        <th>Ссылка на блог</th>
+                      </tr>
+                     {% for object in random_blogs %}
+                      <tr>
+                          <td>{{ object.title }}</td>
+                          <td>{{ object.created_at }}</td>
+                          <td>{{ object.views_count }}</td>
+                          {% if user.is_authenticated %}
+                            <td><a href="{% url 'blog:blog_detail' object.pk %}"> Посмотреть </a></td>
+                          {% else %}
+                            <td><a href="#"> Посмотреть </a></td>
+                          {% endif %}
+                      </tr>
+                     {% endfor %}
+                  </table>
+                </div>
 
                 {% endblock %}
             </div>

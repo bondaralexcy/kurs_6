@@ -13,7 +13,8 @@
                         <p class="card-text">Название: {{ object.title }} ({{ object.slug }})</p>
                         <p class="card-text">Дата создания: {{ object.created_at }}</p>
                         <p class="card-text">{{ object.content }}</p>
-                        <a class="btn btn-primary" href="{% url 'blog:blog_list' %}" role="button">Назад</a>
+                        <a class="btn btn-primary" href="{% url 'blog:blog_list' %}" role="button">Блоги</a>
+                        <a class="btn btn-primary" href="{% url 'services:home' %}" role="button">Главная</a>
                     </div>
                 </div>
                 <div class="card-footer">

@@ -41,6 +41,10 @@ class Homepage(TemplateView):
         context_data["unsuccessful_count"] = Logs.objects.filter(
             attempt_status=False
         ).count()
+        context_data["emails_unique_count"] = Client.objects.all().count()
+        # context_data['random_blogs'] = get_articles_from_cache().order_by('created_at')[:3]
+        context_data['random_blogs'] = Blog.objects.all().order_by('created_at')[:3]
+        
         return context_data
 
 
@@ -96,10 +100,6 @@ class ClientCreateView(LoginRequiredMixin, CreateView):
         user = self.request.user
         client.owner = user
         client.save()
-
-        # self.object = form.save()
-        # self.object.owner = self.request.user
-        # self.object.save()
         return super().form_valid(form)
 
     def get_form_kwargs(self):
