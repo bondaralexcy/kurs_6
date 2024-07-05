@@ -14,7 +14,7 @@ from blog.models import Blog
 from blog.forms import BlogForm, BlogManagerForm
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-
+from blog.services import get_blog_from_cache
 
 class BlogListView(LoginRequiredMixin, ListView):
     """
@@ -28,10 +28,15 @@ class BlogListView(LoginRequiredMixin, ListView):
     extra_context = {"title": "Отзывы о работе сервиса"}  # Передача статических данных
     login_url = "services:home"
 
-    def get_queryset(self, *args, **kwargs):
-        """Выводим только опублткованные статьи"""
-        queryset = super().get_queryset(*args, **kwargs)
-        return queryset.filter(is_published=True)
+    # def get_queryset(self, *args, **kwargs):
+    #     """Выводим только опубликованные статьи"""
+    #     queryset = super().get_queryset(*args, **kwargs)
+    #     return queryset.filter(is_published=True)
+
+
+    def get_queryset2(self):
+        # Получить данные из кеша
+        return get_blog_from_cache()
 
 
 class BlogDetailView(LoginRequiredMixin, DetailView):

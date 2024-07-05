@@ -3,6 +3,8 @@ from services.apps import ServicesConfig
 from services.views import Homepage
 from services.views import ContactsPageViews
 from services.mailing_task import poster
+from django.views.decorators.cache import cache_page
+
 from services.views import (
     ClientCreateView,
     ClientListView,
@@ -36,7 +38,8 @@ urlpatterns = [
     path("contacts/", ContactsPageViews.as_view(), name="contacts"),
     path("client_list/", ClientListView.as_view(), name="client_list"),
     path("create_client/", ClientCreateView.as_view(), name="create_client"),
-    path("view_client/<int:pk>", ClientDetailView.as_view(), name="view_client"),
+    # path("view_client/<int:pk>", ClientDetailView.as_view(), name="view_client"),
+    path("view_client/<int:pk>/", cache_page(60)(ClientDetailView.as_view()), name="view_client"),
     path("edit_client/<int:pk>", ClientUpdateView.as_view(), name="edit_client"),
     path("delete_client/<int:pk>", ClientDeleteView.as_view(), name="delete_client"),
     path("message_list/", MessageListView.as_view(), name="message_list"),
