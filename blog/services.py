@@ -1,23 +1,22 @@
 from django.core.cache import cache
-
 from blog.models import Blog
 from config.settings import CACHE_ENABLED
 
 
 def get_blog_from_cache():
     """
-    Получение записей блога из кэша. Если кэш пуст,то получение из БД.
+    Низкоуровневое кеширование
+    Получение записей блога из кэша.
+    Если кэш пуст,то получение из БД.
     """
-    if not CACHE_ENABLED:
-        return Blog.objects.all()
-    else:
+    queryset = Blog.objects.all()
+    if CACHE_ENABLED:
         key = 'blog_list'
-        blogs = cache.get(key)
-        if blogs is not None:
-            return blogs
-        else:
-            blogs = Blog.objects.all()
-            cache.set(key, blogs)
-            return blogs
+        cache_data = cache.get(key)
+        if cache_data is None:
+            cache_data = queryset
+            cache.set(key, cache_data)
 
+        return cache_data
 
+    return queryset
