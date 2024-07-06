@@ -78,6 +78,7 @@ def reset_password(request):
         characters_list = list(characters)
         random.shuffle(characters_list)
         password = "".join(characters_list[:10])
+        print(password)
         user.set_password(password)
         user.save()
 

@@ -140,11 +140,10 @@ class ClientUpdateView(LoginRequiredMixin, UpdateView):
         raise PermissionDenied
 
 
-
-    # def get_form_kwargs(self):
-    #     kwargs = super().get_form_kwargs()
-    #     kwargs['user'] = self.request.user
-    #     return kwargs
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 class ClientDetailView(DetailView):
     model = Client

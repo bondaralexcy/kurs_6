@@ -129,10 +129,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+STATICFILES_DIRS = (BASE_DIR / "static/",)
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -145,6 +143,7 @@ AUTH_USER_MODEL = "users.User"
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+LOGIN_URL = "/users/login"
 
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = os.getenv("EMAIL_PORT")
@@ -179,12 +178,6 @@ EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", False) == "True"
 # that supports multiple background worker processes instead (e.g. Dramatiq, Celery, Django-RQ,
 # etc. See: https://djangopackages.org/grids/g/workers-queues-tasks/ for popular options).
 # APSCHEDULER_RUN_NOW_TIMEOUT = 25  # Seconds
-
-AUTH_USER_MODEL = "users.User"
-
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-
 
 CACHE_ENABLED = os.getenv("CACHE_ENABLED", False) == "True"
 

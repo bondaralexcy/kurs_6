@@ -35,7 +35,10 @@ app_name = ServicesConfig.name
 urlpatterns = [
     # Кешировать контроллер главной страницы
     #  --> cache_page(60)(Homepage.as_view()) вместо Homepage.as_view()
-    path("", cache_page(60)(Homepage.as_view()), name='home'),
+    # приводит к тому, что кешируется информация о текущем пользователе,
+    # что не дает корректно обрабатывать ситуацию user.is_authenticated
+    # path("", cache_page(60)(Homepage.as_view()), name='home'),
+    path("", Homepage.as_view(), name='home'),
     path("contacts/", ContactsPageViews.as_view(), name="contacts"),
     path("client_list/", ClientListView.as_view(), name="client_list"),
     path("create_client/", ClientCreateView.as_view(), name="create_client"),
@@ -50,7 +53,8 @@ urlpatterns = [
     path("mailing_list/", MailingListView.as_view(), name="mailing_list"),
     path("mailing/create", MailingCreateView.as_view(), name="create_mailing"),
     path("mailing/edit/<int:pk>", MailingUpdateView.as_view(), name="edit_mailing"),
-    path("mailing/view/<int:pk>", MailingDetailView.as_view(), name="view_mailing"),
+    # path("mailing/view/<int:pk>", MailingDetailView.as_view(), name="view_mailing"),
+    path("mailing/view/<int:pk>", cache_page(60)(MailingDetailView.as_view()), name="view_mailing"),
     path("mailing/delete/<int:pk>", MailingDeleteView.as_view(), name="delete_mailing"),
     path("logs/", LogsListView.as_view(), name="logs_list"),
     path("poster/", poster, name="poster"),

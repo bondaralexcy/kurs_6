@@ -28,7 +28,10 @@
               <p class="card-text">
               <span class="text-muted">eMail: {{ client.email }}</span><br>
               <span class="text-muted">Комментарий: {{ client.comment }}</span><br>
-              <span class="text-muted">Создал: {{ client.owner }}</span>
+              <span class="text-muted">Создал: {{ client.owner }}</span><br>
+                {% for mail_serv in client.mailing.all %}
+                  <span class="text-muted">В рассылке: {{ mail_serv.name }}</span><br>
+                {% endfor %}
 
               </p>
                 <hr>
@@ -39,6 +42,7 @@
                     <a href="{% url 'services:delete_client' client.pk %}">Удалить</a>
 
                   {% elif perms.services.can_edit_description%}
+                    <a href="{% url 'services:view_client' client.pk %}">Посмотреть</a>
                     <a href="{% url 'services:edit_client' client.pk %}">Редактировать</a>
                   {% endif %}
                 </div>

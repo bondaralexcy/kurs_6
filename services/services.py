@@ -23,7 +23,7 @@ def send_email():
             newsletter.status = "запущена"
             print(f"Время пришло. Статус: {newsletter.status}")
             # Создаем список мейлов клиентов
-            clients = newsletter.client.all()
+            clients = newsletter.clients.all()
             clients_email = []
             for client in clients:
                 clients_email.append(getattr(client, "email"))
@@ -33,8 +33,8 @@ def send_email():
                 # Отправляем сообщение адресатам
                 print(f"Отправляем сообщение: {newsletter.message.subject}")
                 print(newsletter.message.body)
-                print(settings.EMAIL_HOST_USER)
-                print(clients_email)
+                print(f"От кого: {settings.EMAIL_HOST_USER}")
+                print(f"Кому: {clients_email}")
                 send_mail(
                     subject=newsletter.message.subject,
                     message=newsletter.message.body,
@@ -53,7 +53,7 @@ def send_email():
 
             finally:
                 # Сохраняем лог
-                for client in newsletter.client.all():
+                for client in newsletter.clients.all():
                     (
                         Logs.objects.create(
                             attempt_status=attempt,
