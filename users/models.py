@@ -11,7 +11,10 @@ class User(AbstractUser):
 
     username = None
     email = models.EmailField(unique=True, verbose_name="Email")
-    phone = PhoneNumberField(blank=True, null=True,)
+    phone = PhoneNumberField(
+        blank=True,
+        null=True,
+    )
     avatar = models.ImageField(
         upload_to="users/avatars/",
         verbose_name="Аватар",
@@ -26,8 +29,9 @@ class User(AbstractUser):
         blank=True,
         help_text="Введите наименование страны пребывания",
     )
-    token = models.CharField(max_length=100, verbose_name="Token", blank=True, null=True)
-
+    token = models.CharField(
+        max_length=100, verbose_name="Token", blank=True, null=True
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
@@ -36,8 +40,8 @@ class User(AbstractUser):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
         permissions = [
-            ('can_deactivate_user', 'Can deactivate User'),
-            ('can_view_all_users', 'Can view all users'),
+            ("can_deactivate_user", "Can deactivate User"),
+            ("can_view_all_users", "Can view all users"),
         ]
 
     def __str__(self):

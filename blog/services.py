@@ -11,7 +11,7 @@ def get_blog_from_cache():
     """
     queryset = Blog.objects.all()
     if CACHE_ENABLED:
-        key = 'blog_list'
+        key = "blog_list"
         cache_data = cache.get(key)
         if cache_data is None:
             cache_data = queryset

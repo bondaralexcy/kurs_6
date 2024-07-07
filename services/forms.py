@@ -13,38 +13,39 @@ class StyleFormMixin:
                 field.widget.attrs["class"] = "form-control"
 
 
-
 class ClientForm(StyleFormMixin, ModelForm):
 
     def __init__(self, current_user, *args, **kwargs):
-        """ Фильтруем рассылки
-            Аргумент user передан в форму с помощью метода get_form_kwargs (см. ClientCreateView)
+        """Фильтруем рассылки
+        Аргумент user передан в форму с помощью метода get_form_kwargs (см. ClientCreateView)
         """
         super().__init__(*args, **kwargs)
-        self.fields['mailing'].queryset = Mailing.objects.filter(owner=current_user)
+        self.fields["mailing"].queryset = Mailing.objects.filter(owner=current_user)
 
     class Meta:
         model = Client
-        exclude = ("owner", "is_active",)
-
-
+        exclude = (
+            "owner",
+            "is_active",
+        )
 
 
 class MessageForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Message
-        exclude = ("owner", )
-
+        exclude = ("owner",)
 
 
 class MailingForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Mailing
-        exclude = ("clients","owner",)
+        exclude = (
+            "clients",
+            "owner",
+        )
 
 
 class MailingManagerForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Mailing
         fields = ("is_active",)
-        

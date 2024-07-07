@@ -3,7 +3,6 @@ from django import forms
 from users.models import User
 
 
-
 class StyleFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -14,6 +13,7 @@ class StyleFormMixin:
 
 class UserRegisterForm(StyleFormMixin, UserCreationForm):
     """Регистравция нового пользователя с помощью стандартной формы UserCreationForm"""
+
     class Meta:
         model = User
         fields = ("email", "password1", "password2")
@@ -21,6 +21,7 @@ class UserRegisterForm(StyleFormMixin, UserCreationForm):
 
 class UserProfileForm(StyleFormMixin, UserChangeForm):
     """Изменение профиля пользователя с помощью стандартной формы UserChangeForm"""
+
     class Meta:
         model = User
         fields = ("email", "phone", "country", "avatar")

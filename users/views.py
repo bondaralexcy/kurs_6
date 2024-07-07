@@ -15,11 +15,11 @@ import random
 import string
 
 
-
 class UserCreateView(CreateView):
     """
     Контроллер отвечает за регистрацию нового пользователя
     """
+
     model = User
     form_class = UserRegisterForm
     success_url = reverse_lazy("users:login")
@@ -100,28 +100,28 @@ def reset_password(request):
 
 
 class ProfileView(UpdateView):
-    """ Контроллер изменения профиля пользователя
-    """
+    """Контроллер изменения профиля пользователя"""
+
     model = User
     form_class = UserProfileForm
     success_url = reverse_lazy("services:home")
 
     def get_object(self, queryset=None):
         return self.request.user
-    
+
 
 class UserListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-    """ Контроллер списка пользователей
-    """
+    """Контроллер списка пользователей"""
+
     model = User
-    permission_required = 'users.can_view_all_users'
+    permission_required = "users.can_view_all_users"
     success_url = reverse_lazy("users:users_list")
     context_object_name = "users_list"
     extra_context = {"title": "Пользователи сервиса"}
-    login_url = 'users:login'
+    login_url = "users:login"
 
 
-@permission_required('users.can_deactivate_user')
+@permission_required("users.can_deactivate_user")
 def user_activity(request, pk):
     user = User.objects.get(pk=pk)
     if user.is_active:
@@ -130,4 +130,3 @@ def user_activity(request, pk):
         user.is_active = True
     user.save()
     return redirect(reverse("users:users_list"))
-

@@ -1,0 +1,1 @@
+[{"model": "services.message", "pk": 6, "fields": {"subject": "Еженедельное сообщение", "body": "Привет каждую неделю"}}, {"model": "services.message", "pk": 7, "fields": {"subject": "Еще одно ежедневное сообщение", "body": "Привет Привет"}}, {"model": "services.message", "pk": 9, "fields": {"subject": "Ежемесячное", "body": "сообщение"}}]

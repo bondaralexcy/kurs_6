@@ -13,10 +13,12 @@ from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMix
 from django.core.exceptions import PermissionDenied
 from blog.services import get_blog_from_cache
 
+
 class BlogListView(LoginRequiredMixin, ListView):
     """
     Контроллер отвечает за отображение списка сообщений
     """
+
     model = Blog
     template_name = "blog/blog_list.html"
     context_object_name = (
@@ -24,7 +26,6 @@ class BlogListView(LoginRequiredMixin, ListView):
     )
     extra_context = {"title": "Отзывы о работе сервиса"}  # Передача статических данных
     login_url = "services:home"
-
 
     def get_queryset2(self):
         # Получить данные из кеша
@@ -35,6 +36,7 @@ class BlogDetailView(LoginRequiredMixin, DetailView):
     """
     Контроллер отвечает за отображение одного сообщения
     """
+
     model = Blog
     template_name = "blog/blog_detail.html"
     extra_context = {"title": "Подробная информация"}
@@ -53,14 +55,15 @@ class BlogCreateView(LoginRequiredMixin, CreateView):
     """
     Контроллер отвечает за создание сообщения
     """
+
     model = Blog
     fields = ["title", "content", "image", "is_published"]
     success_url = reverse_lazy("blog:blog_list")
     extra_context = {"title": "Создать"}
 
     def form_valid(self, form):
-        """ При создании нового сообщенмя динамически формируется
-            slug name для заголовка"""
+        """При создании нового сообщенмя динамически формируется
+        slug name для заголовка"""
         blog = form.save()
         user = self.request.user
         blog.owner = user
@@ -74,10 +77,10 @@ class BlogUpdateView(LoginRequiredMixin, UpdateView):
     """
     Контроллер отвечает за редактирование сообщения
     """
+
     model = Blog
     form_class = BlogForm
     extra_context = {"title": "Изменить"}
-
 
     def form_valid(self, form):
         if form.is_valid():
@@ -107,6 +110,7 @@ class BlogDeleteView(LoginRequiredMixin, DeleteView):
     """
     Контроллер отвечает за создание сообщения
     """
+
     model = Blog
     success_url = reverse_lazy("blog:blog_list")
     extra_context = {"title": "Удалить"}

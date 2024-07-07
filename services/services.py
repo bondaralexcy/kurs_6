@@ -6,9 +6,9 @@ from datetime import datetime, timedelta
 import pytz
 import smtplib
 
+
 def send_email():
-    """ Отправка подготовленных рассылок
-    """
+    """Отправка подготовленных рассылок"""
     for newsletter in Mailing.objects.all():
         # Цикл по всем рассылкам
         native_datetime = datetime.now()
@@ -97,6 +97,4 @@ def poster(request, *args, **kwargs):
         send_email()
 
     context = {"title": "Сервис клиентских рассылок"}
-    return render(request, 'services/script_form.html', context)
-
-
+    return render(request, "services/script_form.html", context)

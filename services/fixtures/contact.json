@@ -1,0 +1,1 @@
+[{"model": "services.contact", "pk": 1, "fields": {"name": "Alexcy", "phone": "+79161234567", "email": "bondaralexcy@gmail.com", "message": "hello. friends!", "time": "2024-07-02T20:06:36.766Z"}}, {"model": "services.contact", "pk": 2, "fields": {"name": "Boris", "phone": "+79150974563", "email": "b@mail.com", "message": "Who are you?", "time": "2024-07-02T20:07:54.912Z"}}]
