@@ -37,7 +37,7 @@ urlpatterns = [
     #  --> cache_page(60)(Homepage.as_view()) вместо Homepage.as_view()
     # приводит к тому, что кешируется информация о текущем пользователе,
     # что не дает корректно обрабатывать ситуацию user.is_authenticated
-    # path("", cache_page(60)(Homepage.as_view()), name='home'),
+
     path("", Homepage.as_view(), name='home'),
     path("contacts/", ContactsPageViews.as_view(), name="contacts"),
     path("client_list/", ClientListView.as_view(), name="client_list"),
@@ -47,14 +47,14 @@ urlpatterns = [
     path("delete_client/<int:pk>", ClientDeleteView.as_view(), name="delete_client"),
     path("message_list/", MessageListView.as_view(), name="message_list"),
     path("message/create", MessageCreateView.as_view(), name="create_message"),
-    path("message/view/<int:pk>", MessageDetailView.as_view(), name="view_message"),
+    # Кешируем контроллер показа информации о сообщениях
+    path("message/view/<int:pk>", cache_page(60)(MessageDetailView.as_view()), name="view_message"),
     path("message/edit/<int:pk>", MessageUpdateView.as_view(), name="edit_message"),
     path("message/delete/<int:pk>", MessageDeleteView.as_view(), name="delete_message"),
     path("mailing_list/", MailingListView.as_view(), name="mailing_list"),
     path("mailing/create", MailingCreateView.as_view(), name="create_mailing"),
     path("mailing/edit/<int:pk>", MailingUpdateView.as_view(), name="edit_mailing"),
-    # path("mailing/view/<int:pk>", MailingDetailView.as_view(), name="view_mailing"),
-    path("mailing/view/<int:pk>", cache_page(60)(MailingDetailView.as_view()), name="view_mailing"),
+    path("mailing/view/<int:pk>", MailingDetailView.as_view(), name="view_mailing"),
     path("mailing/delete/<int:pk>", MailingDeleteView.as_view(), name="delete_mailing"),
     path("logs/", LogsListView.as_view(), name="logs_list"),
     path("poster/", poster, name="poster"),

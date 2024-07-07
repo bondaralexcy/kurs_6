@@ -11,9 +11,11 @@
 
 {% block content %}
 
-  <main>
-      <p>Количество рассылок: {{ mailing_count }} </p>
-      <p>Количество клиентов: {{ clients }} </p>
+    <main>
+        {% if not perms.services.can_view_all_mailings %}
+          <p>Количество рассылок: {{ mailing_count }} </p>
+          <p>Количество клиентов: {{ clients }} </p>
+        {% endif %}
 
     {% for mailing in mailing_list %}
         <div class="row row-cols-1 row-cols-md-4 mb-3 text-center">
@@ -26,14 +28,19 @@
                 <ul class="list-unstyled mt-3 mb-4">
                   <li>Периодичность: {{ mailing.periodicity }}</li>
                   <li>Начало: {{ mailing.start_time }}</li>
-<!--                  <li>Конец: {{ mailing.end_time }}</li>-->
                   <li>Статус: {{ mailing.status }}</li>
                   <li>Сообщение: {{ mailing.message }}</li>
 
                 </ul>
-                    <a type="button" href="{% url 'services:view_mailing' mailing.pk %}" >Посмотреть</a>
-                    <a type="button" href="{% url 'services:edit_mailing' mailing.pk %}" >Изменить</a>
-                    <a type="button" href="{% url 'services:delete_mailing' mailing.pk %}" >Удалить</a>
+                    {% if perms.services.can_view_all_mailings or user == mailing.owner or user.is_superuser %}
+                        <a type="button" href="{% url 'services:view_mailing' mailing.pk %}" >Посмотреть</a>
+                    {% endif %}
+                    {% if perms.services.can_deactivate_mailing or user == mailing.owner or user.is_superuser %}
+                        <a type="button" href="{% url 'services:edit_mailing' mailing.pk %}" >Изменить</a>
+                    {% endif %}
+                    {% if user == mailing.owner or user.is_superuser %}
+                        <a type="button" href="{% url 'services:delete_mailing' mailing.pk %}" >Удалить</a>
+                    {% endif %}
               </div>
             </div>
           </div>
@@ -42,9 +49,12 @@
         <li>Пока нет ни одной рассылки.</li>
     {% endfor %}
   </main>
-   <div class="col-12 mb-5">
-      <a href="{% url 'services:create_mailing' %}" class="btn btn-outline-primary">Добавить рассылку</a>
-   </div>
+
+    {% if not perms.services.can_view_all_mailings %}
+        <div class="col-12 mb-5">
+            <a href="{% url 'services:create_mailing' %}" class="btn btn-outline-primary">Добавить рассылку</a>
+        </div>
+    {% endif %}
 {% endblock %}
 
 

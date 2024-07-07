@@ -8,8 +8,9 @@ import secrets
 import smtplib
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
-from django.views.generic import CreateView, UpdateView
-
+from django.views.generic import CreateView, UpdateView, ListView
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 import random
 import string
 
@@ -40,7 +41,8 @@ class UserCreateView(CreateView):
 
         try:
             # Отправляем сообщение пользователю
-            print("EMAIL_HOST_USER = ", settings.EMAIL_HOST_USER)
+            print(f"From: {settings.EMAIL_HOST_USER}")
+            print(f"To: {user.email}")
             print("url = ", url)
             send_mail(
                 subject="Подтверждение почты",
@@ -49,10 +51,10 @@ class UserCreateView(CreateView):
                 recipient_list=[user.email],
                 fail_silently=False,
             )
-            print("Письмо успешно отправлено")
+            print("Запрос успешно отправлен")
 
         except smtplib.SMTPException as exc:
-            print(f"Ошибка при отправке письма: {str(exc)}")
+            print(f"Ошибка при отправке запроса: {str(exc)}")
 
         return super().form_valid(form)
 
@@ -102,7 +104,30 @@ class ProfileView(UpdateView):
     """
     model = User
     form_class = UserProfileForm
-    success_url = reverse_lazy("catalog:home")
+    success_url = reverse_lazy("services:home")
 
     def get_object(self, queryset=None):
         return self.request.user
+    
+
+class UserListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    """ Контроллер списка пользователей
+    """
+    model = User
+    permission_required = 'users.can_view_all_users'
+    success_url = reverse_lazy("users:users_list")
+    context_object_name = "users_list"
+    extra_context = {"title": "Пользователи сервиса"}
+    login_url = 'users:login'
+
+
+@permission_required('users.can_deactivate_user')
+def user_activity(request, pk):
+    user = User.objects.get(pk=pk)
+    if user.is_active:
+        user.is_active = False
+    else:
+        user.is_active = True
+    user.save()
+    return redirect(reverse("users:users_list"))
+

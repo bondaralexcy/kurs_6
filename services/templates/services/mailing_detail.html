@@ -31,20 +31,10 @@
                    <span class="text-muted">Клиент: {{ item.name }}</span><br>
                    <span class="text-muted">Почта клиента: {{ item.email }}</span><br>
                 {% endfor %}
-<!--                {% for i in mailing.message.all %}-->
-<!--                    <h4 class="my-0 fw-normal">Тема письма: {{ i.subject }} </h4>-->
-<!--                {% endfor %}-->
+
             </div>
             <div class="card-footer">
-                <a class="btn btn-link" href="{% url 'services:edit_mailing' mailing.pk%}">Изменить</a>
-                <a class="btn btn-link" href="{% url 'services:delete_mailing' mailing.pk%}">Удалить</a>
                 <a class="btn btn-link" href="{% url 'services:mailing_list'%}">Назад</a>
-<!--              {% if newsletter.owner == request.user or user.is_superuser or perms.services.change_newsletter%}-->
-<!--                <a class="btn btn-link" href="{% url 'services:edit_mailing' mailing.pk%}">Изменить</a>-->
-<!--              {% endif %}-->
-<!--              {% if user.is_superuser or newsletter.owner == request.user or perms.services.delete_mailing%}-->
-<!--                <a class="btn btn-link" href="{% url 'services:delete_mailing' mailing.pk%}">Удалить</a>-->
-<!--              {% endif %}-->
             </div>
           </div>
         </div>

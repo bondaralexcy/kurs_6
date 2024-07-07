@@ -1,6 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
 from django.urls import reverse_lazy, reverse
 from django.views.generic import (
     ListView,
@@ -27,11 +24,6 @@ class BlogListView(LoginRequiredMixin, ListView):
     )
     extra_context = {"title": "Отзывы о работе сервиса"}  # Передача статических данных
     login_url = "services:home"
-
-    # def get_queryset(self, *args, **kwargs):
-    #     """Выводим только опубликованные статьи"""
-    #     queryset = super().get_queryset(*args, **kwargs)
-    #     return queryset.filter(is_published=True)
 
 
     def get_queryset2(self):

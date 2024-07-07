@@ -11,7 +11,7 @@
 
 {% block content %}
   <main>
-      {% if user.is_authenticated %}
+      {% if not perms.services.can_deactivate_mailing %}
         <div class="col-12 mb-5">
             <a class="btn btn-outline-primary" href="{% url 'services:create_message' %}">Добавить сообщение</a>
         </div>
@@ -33,10 +33,11 @@
                 {% if user.is_authenticated %}
                 <div class="container-buttons">
                     <hr>
-                    <a href="{% url 'services:view_message' message.pk%}" >Посмотреть</a>
-                    <a href="{% url 'services:edit_message' message.pk%}" >Изменить</a>
-                    <a href="{% url 'services:delete_message' message.pk%}" >Удалить</a>
-
+                    {% if user == client.owner or user.is_superuser %}
+                        <a href="{% url 'services:view_message' message.pk%}" >Посмотреть</a>
+                        <a href="{% url 'services:edit_message' message.pk%}" >Изменить</a>
+                        <a href="{% url 'services:delete_message' message.pk%}" >Удалить</a>
+                    {% endif %}
                 </div>
                 {% endif %}
               </div>

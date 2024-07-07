@@ -1,0 +1,38 @@
+{% extends 'services/base.html'%}
+{% block content %}
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">Email</th>
+        <th scope="col">Телефон</th>
+        <th scope="col">Персонал</th>
+        <th scope="col">Суперюзер</th>
+        <th scope="col">Активность</th>
+        <th scope="col">Изменить</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for one_user in users_list %}
+    <tr>
+        <td>{{ one_user.email }}</td>
+        <td>{{ one_user.phone }}</td>
+        <td>{{ one_user.is_staff }}</td>
+        <td>{{ one_user.is_superuser }}</td>
+        <td>{{ one_user.is_active }}</td>
+        <td>
+            {% if perms.users.can_deactivate_user %}
+                {% if one_user.is_active %}
+                    <a href="{% url 'users:user_activity' one_user.pk %}"
+                   class="btn btn-sm btn-outline-danger">Деактивировать</a>
+                {% else %}
+                    <a href="{% url 'users:user_activity' one_user.pk %}"
+                   class="btn btn-sm btn-outline-success">Активировать</a>
+                {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

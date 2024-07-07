@@ -37,6 +37,7 @@ class User(AbstractUser):
         verbose_name_plural = "Пользователи"
         permissions = [
             ('can_deactivate_user', 'Can deactivate User'),
+            ('can_view_all_users', 'Can view all users'),
         ]
 
     def __str__(self):

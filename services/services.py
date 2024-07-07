@@ -18,10 +18,12 @@ def send_email():
         print(newsletter.start_time)
         print(now)
         print(newsletter.end_time)
+
         if newsletter.start_time < now < newsletter.end_time:
-            # Если настадо время, то меняем статус рассылки и отправляем сообщение
+            # Если настало время, то меняем статус рассылки и отправляем сообщение
             newsletter.status = "запущена"
             print(f"Время пришло. Статус: {newsletter.status}")
+
             # Создаем список мейлов клиентов
             clients = newsletter.clients.all()
             clients_email = []
@@ -35,6 +37,7 @@ def send_email():
                 print(newsletter.message.body)
                 print(f"От кого: {settings.EMAIL_HOST_USER}")
                 print(f"Кому: {clients_email}")
+
                 send_mail(
                     subject=newsletter.message.subject,
                     message=newsletter.message.body,
@@ -87,7 +90,7 @@ def send_email():
 
 def poster(request, *args, **kwargs):
     """
-    Вызывается из меню
+    Вызывается из пункта меню "Старт!"
     Открывает форму однократного запуска рассылки сообщений
     """
     if request.method == "POST":

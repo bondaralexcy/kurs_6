@@ -11,7 +11,7 @@
 
 {% block content %}
   <main>
-    {% if user.is_authenticated %}
+    {% if not perms.services.can_deactivate_mailing %}
     <div class="col-12 mb-5">
         <a class="btn btn-outline-primary" href="{% url 'services:create_client' %}">Добавить клиента</a>
     </div>

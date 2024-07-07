@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from services.models import Client, Message, Mailing, Logs
+from services.models import Client, Message, Mailing
 
 
 class StyleFormMixin:
@@ -16,12 +16,12 @@ class StyleFormMixin:
 
 class ClientForm(StyleFormMixin, ModelForm):
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, current_user, *args, **kwargs):
         """ Фильтруем рассылки
             Аргумент user передан в форму с помощью метода get_form_kwargs (см. ClientCreateView)
         """
         super().__init__(*args, **kwargs)
-        self.fields['mailing'].queryset = Mailing.objects.filter(owner=user)
+        self.fields['mailing'].queryset = Mailing.objects.filter(owner=current_user)
 
     class Meta:
         model = Client
@@ -40,6 +40,11 @@ class MessageForm(StyleFormMixin, ModelForm):
 class MailingForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Mailing
-        exclude = ("clients","owner","is_active",)
+        exclude = ("clients","owner",)
 
 
+class MailingManagerForm(StyleFormMixin, ModelForm):
+    class Meta:
+        model = Mailing
+        fields = ("is_active",)
+        

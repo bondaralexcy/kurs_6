@@ -7,14 +7,12 @@ NULLABLE = {"null": True, "blank": True}
 
 
 class Message(models.Model):
-    """Класс для сообщения"""
+    """ Класс для сообщения
+        Сообщения не привязаны к рассылке  и являются общими для всех пользователей сервиса
+    """
 
     subject = models.CharField(max_length=50, verbose_name="Тема")
     body = models.TextField(verbose_name="Сообщение")
-    # mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name='Рассылка', **NULLABLE)
-    # owner = models.ForeignKey(
-    #     User, verbose_name="Владелец", on_delete=models.SET_NULL, **NULLABLE
-    # )
 
     def __str__(self):
         return self.subject
@@ -26,7 +24,8 @@ class Message(models.Model):
 
 
 class Mailing(models.Model):
-    """Класс для настройки рассылки"""
+    """Класс для настройки рассылки
+    """
 
     ten_minutes = "каждые 10 минут"
     daily = "раз в день"
@@ -75,20 +74,23 @@ class Mailing(models.Model):
     def __str__(self):
         return self.name
 
-        # return f"Время: {self.start_time} - {self.end_time}, Статус: {self.status}, Периодичность: {self.periodicity}"
+
 
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
         # Добавляем отдельные права для менеджера
         permissions = [
-            ('can_reset_status', 'Can change mailing status'),
+            ('can_deactivate_mailing', 'Can deactivate mailing'),
+            ('can_view_all_mailings', 'Can view all mailings'),
         ]
 
 
 
 class Client(models.Model):
-    """Класс для клиентов"""
+    """ Класс для клиентов
+        Клиент принадлежит пользователю и может быть привязан к любой рассылке
+    """
 
     name = models.CharField(max_length=100, verbose_name="ФИО")
     email = models.EmailField(
@@ -111,19 +113,22 @@ class Client(models.Model):
 
 
 
-
-
 class Logs(models.Model):
-    """Класс для сбора статистики"""
+    """Модель для сбора статистики
+
+        Попытка рассылки:
+        дата и время последней попытки;
+        статус попытки (успешно / не успешно);
+        ответ почтового сервера, если он был.
+    """
 
     attempt_status = models.BooleanField(verbose_name="статус попытки")
     attempt_time = models.DateTimeField(verbose_name="дата и время последней попытки")
     response = models.CharField(
-        max_length=100, verbose_name="ответ почтового сервера", **NULLABLE
+        max_length=150, verbose_name="ответ почтового сервера", **NULLABLE
     )
-
     mailing = models.ForeignKey(
-        Mailing, verbose_name="рассылка", null=True, on_delete=models.SET_NULL
+        Mailing, verbose_name="рассылка", null=True, on_delete=models.CASCADE
     )
     client = models.ForeignKey(
         Client, verbose_name="клиент", null=True, on_delete=models.SET_NULL
@@ -138,6 +143,9 @@ class Logs(models.Model):
 
 
 class Contact(models.Model):
+    """
+        Контакты клиентов сервиса
+    """
     name = models.CharField(max_length=50, verbose_name="Имя")
     phone = models.TextField(verbose_name="Номер телефона")
     email = models.EmailField(verbose_name="eMail")
